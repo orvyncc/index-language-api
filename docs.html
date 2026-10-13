@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index Language API – Documentación</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --green: #4ade80;
+      --red: #f87171;
+      --yellow: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; color: var(--primary); }
+    h2 { font-size: 1.35rem; margin: 40px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    h3 { font-size: 1.1rem; margin: 24px 0 10px; color: var(--primary); }
+    p, li { color: var(--muted); margin-bottom: 10px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .get { background: #065f46; color: #6ee7b7; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9rem;
+    }
+    pre {
+      background: #020617;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 12px 0;
+      border: 1px solid var(--border);
+    }
+    .method { color: var(--green); font-weight: 700; }
+    .path { color: var(--yellow); }
+    .url { color: var(--primary); word-break: break-all; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--primary); font-weight: 600; }
+    .success { color: var(--green); }
+    .error { color: var(--red); }
+    .note {
+      background: #1e3a5f;
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      font-size: 0.95rem;
+    }
+    footer { margin-top: 60px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Index Language API</h1>
+  <p>Documentación sencilla de todos los endpoints. Solo existen dos idiomas: <strong>EN</strong> (inglés, predeterminado) y <strong>ES</strong> (español).</p>
+
+  <div class="note">
+    <strong>Importante:</strong> Esta API solo entrega traducciones. No guarda preferencias de servidores ni tiene nada de Discord. El bot Index se conectará después.
+  </div>
+
+  <!-- ==================== ENDPOINTS ==================== -->
+  <h2>Endpoints disponibles</h2>
+
+  <!-- GET / -->
+  <div class="card">
+    <h3><span class="badge get">GET</span> <span class="path">/</span></h3>
+    <p>Información general de la API (nombre, versión, estado, idiomas y lista de endpoints).</p>
+    <p><strong>Ejemplo de uso:</strong></p>
+    <pre>curl http://localhost:3000/</pre>
+    <p><strong>Respuesta de ejemplo:</strong></p>
+    <pre>{
+  "name": "Index Language API",
+  "version": "1.0.0",
+  "status": "operational",
+  "description": "...",
+  "defaultLanguage": "EN",
+  "languages": ["EN", "ES"],
+  "endpoints": [ ... ]
+}</pre>
+  </div>
+
+  <!-- GET /health -->
+  <div class="card">
+    <h3><span class="badge get">GET</span> <span class="path">/health</span></h3>
+    <p>Comprueba si la API está funcionando. Útil para Render y monitoreo.</p>
+    <pre>curl http://localhost:3000/health</pre>
+    <pre>{
+  "status": "ok",
+  "version": "1.0.0",
+  "timestamp": "2026-10-13T18:00:00.000Z"
+}</pre>
+  </div>
+
+  <!-- GET /languages -->
+  <div class="card">
+    <h3><span class="badge get">GET</span> <span class="path">/languages</span></h3>
+    <p>Lista los idiomas disponibles y cuál es el predeterminado (siempre EN).</p>
+    <pre>curl http://localhost:3000/languages</pre>
+    <pre>{
+  "success": true,
+  "defaultLanguage": "EN",
+  "languages": [
+    { "code": "EN", "name": "English" },
+    { "code": "ES", "name": "Español" }
+  ]
+}</pre>
+  </div>
+
+  <!-- GET /languages/:lang -->
+  <div class="card">
+    <h3><span class="badge get">GET</span> <span class="path">/languages/:lang</span></h3>
+    <p>Devuelve <strong>todo</strong> el catálogo de traducciones de un idioma.</p>
+    <p>Valores válidos de <code>:lang</code>: <code>EN</code> o <code>ES</code> (mayúsculas o minúsculas).</p>
+    
+    <p><strong>Ejemplos:</strong></p>
+    <pre>curl http://localhost:3000/languages/EN
+curl http://localhost:3000/languages/ES</pre>
+
+    <p><strong>Respuesta de ejemplo (resumida):</strong></p>
+    <pre>{
+  "success": true,
+  "language": "ES",
+  "translations": {
+    "common": { "yes": "Sí", "no": "No", ... },
+    "errors": { "no_permission": "No tienes permisos...", ... },
+    "tickets": { ... },
+    ...
+  }
+}</pre>
+
+    <p class="error"><strong>Error 400</strong> si pones un idioma que no existe (ej: FR, PT, etc.):</p>
+    <pre>{
+  "success": false,
+  "error": "Unsupported language \"FR\". Available languages are: EN, ES."
+}</pre>
+  </div>
+
+  <!-- GET /languages/:lang/:key -->
+  <div class="card">
+    <h3><span class="badge get">GET</span> <span class="path">/languages/:lang/:key</span></h3>
+    <p>Devuelve <strong>una sola traducción</strong> por su clave.</p>
+    <p>La clave usa puntos, por ejemplo: <code>errors.no_permission</code>, <code>tickets.created</code>, <code>common.yes</code>.</p>
+
+    <p><strong>Ejemplos reales:</strong></p>
+    <pre>curl http://localhost:3000/languages/ES/errors.no_permission
+curl http://localhost:3000/languages/EN/errors.no_permission
+curl http://localhost:3000/languages/ES/tickets.created
+curl http://localhost:3000/languages/EN/common.yes</pre>
+
+    <p><strong>Respuesta correcta:</strong></p>
+    <pre>{
+  "success": true,
+  "language": "ES",
+  "key": "errors.no_permission",
+  "text": "No tienes permisos para utilizar este comando."
+}</pre>
+
+    <p class="error"><strong>Error 400</strong> – idioma no válido:</p>
+    <pre>{
+  "success": false,
+  "error": "Unsupported language \"FR\". Available languages are: EN, ES."
+}</pre>
+
+    <p class="error"><strong>Error 404</strong> – la clave no existe:</p>
+    <pre>{
+  "success": false,
+  "error": "Translation key \"foo.bar\" not found for language EN."
+}</pre>
+  </div>
+
+  <!-- ==================== CLAVES ÚTILES ==================== -->
+  <h2>Algunas claves útiles (ejemplos)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Clave</th>
+        <th>EN</th>
+        <th>ES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>errors.no_permission</code></td>
+        <td>You don't have permission...</td>
+        <td>No tienes permisos...</td>
+      </tr>
+      <tr>
+        <td><code>errors.cooldown</code></td>
+        <td>You are on cooldown...</td>
+        <td>Estás en tiempo de espera...</td>
+      </tr>
+      <tr>
+        <td><code>tickets.created</code></td>
+        <td>Your ticket has been created...</td>
+        <td>Tu ticket ha sido creado...</td>
+      </tr>
+      <tr>
+        <td><code>welcome.message</code></td>
+        <td>Welcome to **{server}**...</td>
+        <td>¡Bienvenido a **{server}**...</td>
+      </tr>
+      <tr>
+        <td><code>general.ping</code></td>
+        <td>Pong! Latency: {latency}ms</td>
+        <td>¡Pong! Latencia: {latency}ms</td>
+      </tr>
+      <tr>
+        <td><code>common.yes</code> / <code>common.no</code></td>
+        <td>Yes / No</td>
+        <td>Sí / No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    Las llaves entre llaves <code>{user}</code>, <code>{server}</code>, <code>{latency}</code> etc. las reemplazará el bot Index más adelante. La API solo entrega el texto.
+  </div>
+
+  <!-- ==================== CÓMO USAR DESDE EL BOT ==================== -->
+  <h2>Cómo lo usará el bot Index (futuro)</h2>
+  <ol>
+    <li>El bot llama a <code>/languages</code> para saber que existen EN y ES.</li>
+    <li>Guarda en su propia base de datos qué idioma quiere cada servidor de Discord.</li>
+    <li>Cuando un usuario usa un comando, el bot pide la traducción con:<br>
+        <code>GET /languages/ES/errors.no_permission</code> (o EN).</li>
+    <li>Si el servidor no tiene idioma configurado → usa EN (el predeterminado).</li>
+  </ol>
+
+  <h2>Códigos de estado HTTP</h2>
+  <table>
+    <tr><th>Código</th><th>Significado</th></tr>
+    <tr><td class="success">200</td><td>Todo bien</td></tr>
+    <tr><td class="error">400</td><td>Idioma inválido o clave mal formada</td></tr>
+    <tr><td class="error">404</td><td>Clave de traducción no existe o ruta desconocida</td></tr>
+    <tr><td class="error">429</td><td>Demasiadas peticiones (rate limit)</td></tr>
+    <tr><td class="error">500</td><td>Error interno del servidor</td></tr>
+  </table>
+
+  <footer>
+    Index Language API v1.0.0 · Solo EN y ES · Inglés por defecto
+  </footer>
+
+</body>
+</html>

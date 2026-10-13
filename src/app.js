@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 const indexRoutes = require('./routes/index');
 const languagesRoutes = require('./routes/languages');
 const { errorHandler, notFoundHandler } = require('./middleware/error-handler');
@@ -11,11 +12,21 @@ languageService.loadCatalogs();
 
 const app = express();
 
-// Trust proxy (needed behind Render / reverse proxies for correct rate-limit IPs)
+// Trust proxy (needed behind Render / reverse proxies)
 app.set('trust proxy', 1);
 
-// Parse JSON bodies (not strictly required for this read-only API, but good practice)
+// Parse JSON bodies
 app.use(express.json({ limit: '16kb' }));
+
+// ========== DOCUMENTACIÓN ==========
+// Ruta directa y fiable para la documentación
+app.get(['/docs', '/docs/', '/docs/docs.html'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/docs.html'));
+});
+
+// También servimos la carpeta public por si acaso
+app.use('/docs', express.static(path.join(__dirname, '../public')));
+// ==================================
 
 // CORS configuration from environment
 const corsOrigin = process.env.CORS_ORIGIN || '*';
@@ -28,7 +39,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Basic rate limiting
-const windowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000; // 15 min
+const windowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000;
 const maxRequests = parseInt(process.env.RATE_LIMIT_MAX, 10) || 100;
 
 const limiter = rateLimit({
